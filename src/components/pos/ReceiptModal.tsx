@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sale, ShopSettings } from '../../types';
 import { formatCurrency, formatDateTime } from '../../utils/formatters';
+import { IMAGE_PATHS } from '../../constants/imagePaths';
 import { Printer, X, Check, Copy } from 'lucide-react';
 
 interface ReceiptModalProps {
@@ -93,6 +94,15 @@ ${settings.receiptFooterNotice}
           >
             {/* Store Branding */}
             <div className="text-center pb-4 border-b border-dashed border-stone-300">
+              <img
+                src={settings.logoUrl || IMAGE_PATHS.branding.logo}
+                alt={settings.shopName}
+                width={48}
+                height={48}
+                loading="eager"
+                decoding="async"
+                className="w-12 h-12 rounded-full mx-auto mb-2 object-cover border border-stone-200"
+              />
               <h2 className="font-serif-luxury text-lg font-bold text-stone-900 tracking-tight">
                 {settings.shopName}
               </h2>
@@ -267,6 +277,13 @@ ${settings.receiptFooterNotice}
       <div className="hidden print:block print-only-container">
         <div className="thermal-receipt-print">
           <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+            <img
+              src={settings.logoUrl || IMAGE_PATHS.branding.logo}
+              alt={settings.shopName}
+              width={40}
+              height={40}
+              style={{ margin: '0 auto 6px auto', borderRadius: '50%', display: 'block', border: '1px solid #ccc' }}
+            />
             <h3 style={{ fontSize: '13pt', fontWeight: 'bold', margin: '0' }}>{settings.shopName}</h3>
             <p style={{ margin: '2px 0', fontSize: '8pt' }}>{settings.tagline}</p>
             <p style={{ margin: '2px 0', fontSize: '8pt' }}>{settings.address}</p>

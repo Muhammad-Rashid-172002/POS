@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { dataService } from './services/dataService';
 import { ShopSettings, StaffUser } from './types';
+import { IMAGE_PATHS } from './constants/imagePaths';
 import { POSScreen } from './components/pos/POSScreen';
 import { DashboardOverview } from './components/dashboard/DashboardOverview';
 import { InventoryManager } from './components/inventory/InventoryManager';
@@ -72,12 +73,18 @@ export default function App() {
         {/* Brand Lockup */}
         <div className="p-5 border-b border-stone-200">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center font-serif-luxury font-bold text-base shadow-sm">
-              Z
-            </div>
+            <img
+              src={settings.logoUrl || IMAGE_PATHS.branding.logo}
+              alt={settings.shopName}
+              width={36}
+              height={36}
+              loading="eager"
+              decoding="async"
+              className="w-9 h-9 rounded-lg object-cover border border-rose-200/60 shadow-xs shrink-0"
+            />
             <div>
               <h1 className="font-serif-luxury font-bold text-stone-900 text-base leading-none">
-                Zebaish Boutique
+                {settings.shopName}
               </h1>
               <p className="text-[10px] text-stone-400 mt-1 uppercase tracking-wider font-medium">
                 Point of Sale System
@@ -145,10 +152,16 @@ export default function App() {
         {/* MOBILE HEADER (Phones/Small Tablets) */}
         <header className="md:hidden bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between no-print">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-rose-600 text-white flex items-center justify-center font-serif-luxury font-bold text-sm">
-              Z
-            </div>
-            <span className="font-serif-luxury font-bold text-stone-900 text-sm">Zebaish Boutique</span>
+            <img
+              src={settings.logoUrl || IMAGE_PATHS.branding.logo}
+              alt={settings.shopName}
+              width={28}
+              height={28}
+              loading="eager"
+              decoding="async"
+              className="w-7 h-7 rounded-lg object-cover border border-rose-200/60 shadow-xs shrink-0"
+            />
+            <span className="font-serif-luxury font-bold text-stone-900 text-sm">{settings.shopName}</span>
           </div>
 
           <div className="flex items-center gap-2">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sale, Expense, Product, Customer, ShopSettings, StaffUser } from '../../types';
 import { dataService } from '../../services/dataService';
 import { formatCurrency, formatDateTime } from '../../utils/formatters';
+import { getCategoryThumbnail, getProductFallbackImage } from '../../constants/imagePaths';
 import { ReceiptModal } from '../pos/ReceiptModal';
 import {
   TrendingUp,
@@ -94,11 +95,29 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   const lowStockCount = products.filter((p) => p.stockQuantity <= p.minStockThreshold).length;
 
   // Best-Selling Products Calculation
-  const productSalesMap: { [productId: string]: { name: string; qty: number; revenue: number } } = {};
+  const productSalesMap: {
+    [productId: string]: {
+      id: string;
+      name: string;
+      qty: number;
+      revenue: number;
+      image?: string;
+      category?: string;
+    };
+  } = {};
+
   sales.forEach((s) => {
     s.items.forEach((item) => {
       if (!productSalesMap[item.productId]) {
-        productSalesMap[item.productId] = { name: item.name, qty: 0, revenue: 0 };
+        const p = products.find((prod) => prod.id === item.productId);
+        productSalesMap[item.productId] = {
+          id: item.productId,
+          name: item.name,
+          qty: 0,
+          revenue: 0,
+          image: p?.image,
+          category: p?.category,
+        };
       }
       productSalesMap[item.productId].qty += item.quantity;
       productSalesMap[item.productId].revenue += item.lineTotal;
@@ -293,10 +312,22 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
             <div className="space-y-3.5">
               {Object.entries(categorySalesMap).map(([category, amount]) => {
                 const pct = Math.round((amount / totalCatSales) * 100);
+                const catThumb = getCategoryThumbnail(category);
                 return (
                   <div key={category} className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="font-medium text-stone-800">{category}</span>
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={catThumb}
+                          alt={category}
+                          width={24}
+                          height={24}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-6 h-6 rounded-md object-cover border border-stone-200 shrink-0"
+                        />
+                        <span className="font-medium text-stone-800">{category}</span>
+                      </div>
                       <span className="font-mono-numbers text-stone-600">
                         {formatCurrency(amount, settings.currencySymbol)} ({pct}%)
                       </span>
@@ -326,25 +357,37 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           </div>
 
           <div className="divide-y divide-stone-100">
-            {topProducts.map((p, idx) => (
-              <div key={p.name} className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-700 text-xs font-bold flex items-center justify-center shrink-0">
-                    {idx + 1}
-                  </span>
-                  <div>
-                    <h5 className="text-xs font-semibold text-stone-900 line-clamp-1">{p.name}</h5>
-                    <div className="text-[11px] text-stone-400 font-mono-numbers">
-                      {p.qty} units sold
+            {topProducts.map((p, idx) => {
+              const productImg = p.image || getProductFallbackImage(p.category);
+              return (
+                <div key={p.name} className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-700 text-xs font-bold flex items-center justify-center shrink-0">
+                      {idx + 1}
+                    </span>
+                    <img
+                      src={productImg}
+                      alt={p.name}
+                      width={36}
+                      height={36}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-9 h-9 rounded-lg object-cover border border-stone-200 shrink-0"
+                    />
+                    <div>
+                      <h5 className="text-xs font-semibold text-stone-900 line-clamp-1">{p.name}</h5>
+                      <div className="text-[11px] text-stone-400 font-mono-numbers">
+                        {p.qty} units sold
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="text-right font-mono-numbers text-xs font-bold text-stone-900">
-                  {formatCurrency(p.revenue, settings.currencySymbol)}
+                  <div className="text-right font-mono-numbers text-xs font-bold text-stone-900">
+                    {formatCurrency(p.revenue, settings.currencySymbol)}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

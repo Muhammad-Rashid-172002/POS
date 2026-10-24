@@ -11,6 +11,8 @@ import {
 } from '../../types';
 import { dataService } from '../../services/dataService';
 import { formatCurrency, getStockStatus } from '../../utils/formatters';
+import { IMAGE_PATHS, getCategoryThumbnail, getProductFallbackImage } from '../../constants/imagePaths';
+import { getFallbackImageForCategory } from '../../assets/images';
 import { CheckoutModal } from './CheckoutModal';
 import { ReceiptModal } from './ReceiptModal';
 import { ReturnsModal } from './ReturnsModal';
@@ -366,29 +368,45 @@ export const POSScreen: React.FC<POSScreenProps> = ({ currentStaff, settings }) 
             <button
               type="button"
               onClick={() => setSelectedCategory('all')}
-              className={`px-3 py-1 rounded-md font-medium whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
                 selectedCategory === 'all'
                   ? 'bg-stone-900 text-white shadow-xs'
                   : 'bg-stone-100 text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'
               }`}
             >
-              All Items ({products.length})
+              <span>All Items</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${selectedCategory === 'all' ? 'bg-white/20' : 'bg-stone-200 text-stone-600 font-mono'}`}>
+                {products.length}
+              </span>
             </button>
             {categories.map((cat) => {
               const count = products.filter((p) => p.category === cat).length;
               const isSelected = selectedCategory === cat;
+              const catThumb = getCategoryThumbnail(cat);
               return (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1 rounded-md font-medium whitespace-nowrap transition-colors ${
+                  className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors flex items-center gap-2 ${
                     isSelected
                       ? 'bg-rose-700 text-white shadow-xs'
                       : 'bg-stone-100 text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'
                   }`}
                 >
-                  {cat} ({count})
+                  <img
+                    src={catThumb}
+                    alt={cat}
+                    width={20}
+                    height={20}
+                    className="w-5 h-5 rounded-full object-cover border border-black/10 shrink-0"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span>{cat}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${isSelected ? 'bg-white/20' : 'bg-stone-200 text-stone-600'}`}>
+                    {count}
+                  </span>
                 </button>
               );
             })}
@@ -405,9 +423,10 @@ export const POSScreen: React.FC<POSScreenProps> = ({ currentStaff, settings }) 
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
-              {filteredProducts.map((product) => {
+              {filteredProducts.map((product, idx) => {
                 const stockInfo = getStockStatus(product.stockQuantity, product.minStockThreshold);
                 const hasVariants = product.variants && product.variants.length > 0;
+                const imageSrc = product.image || getProductFallbackImage(product.category);
 
                 return (
                   <div
@@ -426,18 +445,15 @@ export const POSScreen: React.FC<POSScreenProps> = ({ currentStaff, settings }) 
                   >
                     {/* Thumbnail */}
                     <div className="relative aspect-4/3 w-full bg-stone-100 overflow-hidden">
-                      {product.image ? (
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-stone-100 text-stone-400 text-xs">
-                          <Layers className="w-6 h-6 stroke-1" />
-                        </div>
-                      )}
+                      <img
+                        src={imageSrc}
+                        alt={product.name}
+                        width={280}
+                        height={210}
+                        loading={idx < 8 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
 
                       {/* Stock status indicator */}
                       <div className="absolute top-2 left-2">
@@ -814,9 +830,20 @@ export const POSScreen: React.FC<POSScreenProps> = ({ currentStaff, settings }) 
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             <div className="p-4 border-b border-stone-200 bg-stone-50 flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-stone-900 text-sm">{variantModalProduct.name}</h3>
-                <p className="text-xs text-stone-500">Choose shade, size, or style variant</p>
+              <div className="flex items-center gap-3">
+                <img
+                  src={variantModalProduct.image || getProductFallbackImage(variantModalProduct.category)}
+                  alt={variantModalProduct.name}
+                  width={44}
+                  height={44}
+                  className="w-11 h-11 rounded-lg object-cover border border-stone-200 shrink-0"
+                  loading="eager"
+                  decoding="async"
+                />
+                <div>
+                  <h3 className="font-semibold text-stone-900 text-sm">{variantModalProduct.name}</h3>
+                  <p className="text-xs text-stone-500">Choose shade, size, or style variant</p>
+                </div>
               </div>
               <button
                 type="button"

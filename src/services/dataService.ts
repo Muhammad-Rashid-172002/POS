@@ -13,6 +13,7 @@ import {
   SaleReturnRecord,
   PaymentMethod,
 } from '../types';
+import { IMAGE_PATHS, getProductFallbackImage } from '../constants/imagePaths';
 
 const STORAGE_KEYS = {
   PRODUCTS: 'zebaish_products_v1',
@@ -40,6 +41,7 @@ export const DEFAULT_CATEGORIES = [
 const INITIAL_SETTINGS: ShopSettings = {
   shopName: 'Zebaish Ladies Boutique & Cosmetics',
   tagline: 'Bridal Jewellery, Luxury Cosmetics, Designer Laces & Accessories',
+  logoUrl: IMAGE_PATHS.branding.logo,
   phone: '+92 300 4567890',
   whatsapp: '+92 321 9876543',
   email: 'info@zebaishboutique.pk',
@@ -83,7 +85,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 6850,
     stockQuantity: 8,
     minStockThreshold: 3,
-    image: '/src/assets/images/jewelry_kundan_set_1792836116487.jpg',
+    image: IMAGE_PATHS.products.kundanChoker,
     description: '24K antique micro-gold plated brass choker embellished with hand-cut faux rubies, uncut Kundan stones, and freshwater seed pearl clusters.',
     supplierId: 'sup-1',
     supplierName: 'Rajput Kundan Jewellers Anarkali',
@@ -123,7 +125,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 1450,
     stockQuantity: 28,
     minStockThreshold: 8,
-    image: '/src/assets/images/cosmetics_makeup_kit_1792836117515.jpg',
+    image: IMAGE_PATHS.products.matteLipstick,
     description: '16-hour smudge-proof hydrating liquid lipstick with Vitamin E and shea butter. Rich South Asian undertones.',
     supplierId: 'sup-2',
     supplierName: 'Kashees Cosmetics & Wholesale Hub',
@@ -173,7 +175,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 580,
     stockQuantity: 65,
     minStockThreshold: 15,
-    image: '/src/assets/images/lace_embroidery_border_1792836118518.jpg',
+    image: IMAGE_PATHS.products.zariVelvetLace,
     description: '3.5 inch luxury bridal border lace on deep wine velvet with pure golden tilla wire embroidery and micro pearl edging. Ideal for lehengas, dupattas, and damans.',
     supplierId: 'sup-3',
     supplierName: 'Al-Madina Lace & Fancy Trimmings Tariq Road',
@@ -191,7 +193,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 1250,
     stockQuantity: 14,
     minStockThreshold: 4,
-    image: '/src/assets/images/hair_accessories_pearl_1792836119139.jpg',
+    image: IMAGE_PATHS.products.bridalHairVine,
     description: 'Flexible bendable gold wire hair vine hand-woven with Swarovski crystals, floral brass charms, and ivory faux pearls for wedding updos.',
     supplierId: 'sup-1',
     supplierName: 'Rajput Kundan Jewellers Anarkali',
@@ -209,7 +211,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 950,
     stockQuantity: 22,
     minStockThreshold: 6,
-    image: '/src/assets/images/skincare_glow_serum_1792836118938.jpg',
+    image: IMAGE_PATHS.products.roseFacialMist,
     description: '100% steam-distilled Choa Saidan Shah damask rose water infused with multi-molecular hyaluronic acid and aloe vera for instant dewy hydration.',
     supplierId: 'sup-4',
     supplierName: 'Pure Botanicals Lahore',
@@ -227,7 +229,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 320,
     stockQuantity: 4, // LOW STOCK TRIGGER FOR ALERT!
     minStockThreshold: 10,
-    image: '/src/assets/images/lace_embroidery_border_1792836118518.jpg',
+    image: IMAGE_PATHS.products.gotaCutworkLace,
     description: '2-inch sheer organza scalloped cutwork border with metallic silver and gold gota patti work. Lightweight, crisp finish.',
     supplierId: 'sup-3',
     supplierName: 'Al-Madina Lace & Fancy Trimmings Tariq Road',
@@ -245,7 +247,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 1850,
     stockQuantity: 11,
     minStockThreshold: 4,
-    image: '/src/assets/images/jewelry_kundan_set_1792836116487.jpg',
+    image: IMAGE_PATHS.products.goldJhumkas,
     description: 'Traditional Pakistani chandelier bell jhumkas with filigree peacock carvings and cascading hanging pearls.',
     supplierId: 'sup-1',
     supplierName: 'Rajput Kundan Jewellers Anarkali',
@@ -263,7 +265,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 790,
     stockQuantity: 19,
     minStockThreshold: 5,
-    image: '/src/assets/images/hair_accessories_pearl_1792836119139.jpg',
+    image: IMAGE_PATHS.products.silkScrunchies,
     description: 'Set of 3 anti-breakage pure silk touch scrunchies in Champagne, Rose Gold, and Blush Pink.',
     supplierId: 'sup-4',
     supplierName: 'Pure Botanicals Lahore',
@@ -281,7 +283,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 2200,
     stockQuantity: 15,
     minStockThreshold: 5,
-    image: '/src/assets/images/cosmetics_makeup_kit_1792836117515.jpg',
+    image: IMAGE_PATHS.products.radiantFoundation,
     description: 'High definition buildable medium-to-full coverage with golden undertones formulated for Pakistani climates.',
     supplierId: 'sup-2',
     supplierName: 'Kashees Cosmetics & Wholesale Hub',
@@ -331,7 +333,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 2850,
     stockQuantity: 2, // LOW STOCK
     minStockThreshold: 4,
-    image: '/src/assets/images/lace_embroidery_border_1792836118518.jpg',
+    image: IMAGE_PATHS.products.embroideredPotliBag,
     description: 'Intricately stitched maroon velvet pouch with antique metal bead fringe, pearl drawstring tassels, and gold braided wrist handle.',
     supplierId: 'sup-3',
     supplierName: 'Al-Madina Lace & Fancy Trimmings Tariq Road',
@@ -349,7 +351,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 420,
     stockQuantity: 34,
     minStockThreshold: 10,
-    image: '/src/assets/images/lace_embroidery_border_1792836118518.jpg',
+    image: IMAGE_PATHS.products.mirrorWorkLace,
     description: 'Hand-stitched genuine real mini glass mirrors bound with brass zari loops on cotton base. Traditional Sindhi & Punjabi ethnic flair.',
     supplierId: 'sup-3',
     supplierName: 'Al-Madina Lace & Fancy Trimmings Tariq Road',
@@ -367,7 +369,7 @@ const INITIAL_PRODUCTS: Product[] = [
     salePrice: 2400,
     stockQuantity: 0, // OUT OF STOCK TEST
     minStockThreshold: 3,
-    image: '/src/assets/images/jewelry_kundan_set_1792836116487.jpg',
+    image: IMAGE_PATHS.products.hyderabadiBangles,
     description: 'Finely engraved royal floral relief bangles with side screw lock. Hypoallergenic double gold finish.',
     supplierId: 'sup-1',
     supplierName: 'Rajput Kundan Jewellers Anarkali',
@@ -708,9 +710,35 @@ class DataService {
   }
 
   private ensureInitialized() {
-    if (!localStorage.getItem(STORAGE_KEYS.PRODUCTS)) {
+    const existingProductsStr = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+    if (!existingProductsStr) {
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(INITIAL_PRODUCTS));
+    } else {
+      // Sync stored products so their image references resolve to the local bundled assets
+      try {
+        const stored: Product[] = JSON.parse(existingProductsStr);
+        let updated = false;
+        stored.forEach((p) => {
+          const initialMatch = INITIAL_PRODUCTS.find((init) => init.id === p.id);
+          if (initialMatch && initialMatch.image && p.image !== initialMatch.image) {
+            p.image = initialMatch.image;
+            updated = true;
+          } else if (!p.image || p.image.startsWith('http') || p.image.startsWith('/src/')) {
+            const fallback = getProductFallbackImage(p.category);
+            if (p.image !== fallback) {
+              p.image = fallback;
+              updated = true;
+            }
+          }
+        });
+        if (updated) {
+          localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(stored));
+        }
+      } catch {
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(INITIAL_PRODUCTS));
+      }
     }
+
     if (!localStorage.getItem(STORAGE_KEYS.CUSTOMERS)) {
       localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(INITIAL_CUSTOMERS));
     }
@@ -785,6 +813,7 @@ class DataService {
         products[index] = {
           ...products[index],
           ...product,
+          image: product.image || products[index].image || getProductFallbackImage(product.category),
           updatedAt: now,
         } as Product;
         localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
@@ -805,7 +834,7 @@ class DataService {
       salePrice: Number(product.salePrice) || 0,
       stockQuantity: Number(product.stockQuantity) || 0,
       minStockThreshold: Number(product.minStockThreshold) || 5,
-      image: product.image || '/src/assets/images/cosmetics_makeup_kit_1792836117515.jpg',
+      image: product.image || getProductFallbackImage(product.category),
       description: product.description || '',
       supplierId: product.supplierId,
       supplierName: product.supplierName,

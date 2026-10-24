@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Product, ProductVariant, ProductCategory, ShopSettings, StaffUser } from '../../types';
 import { dataService } from '../../services/dataService';
 import { formatCurrency, getStockStatus } from '../../utils/formatters';
+import { IMAGE_PATHS, getProductFallbackImage } from '../../constants/imagePaths';
 import {
   Plus,
   Search,
@@ -87,9 +88,10 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ currentStaff
   const totalValuationRetail = products.reduce((acc, p) => acc + p.salePrice * p.stockQuantity, 0);
 
   const handleOpenAdd = () => {
+    const defaultCat = categories[0] || 'Cosmetics & Makeup';
     setEditingProduct({
       name: '',
-      category: categories[0] || 'Cosmetics & Makeup',
+      category: defaultCat,
       unit: 'piece',
       sku: `SKU-${Date.now().toString().slice(-6)}`,
       barcode: `${Math.floor(1000000000 + Math.random() * 9000000000)}`,
@@ -97,7 +99,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ currentStaff
       salePrice: 0,
       stockQuantity: 10,
       minStockThreshold: settings.defaultLowStockThreshold,
-      image: '/src/assets/images/cosmetics_makeup_kit_1792836117515.jpg',
+      image: getProductFallbackImage(defaultCat),
       description: '',
       variants: [],
     });
@@ -296,8 +298,12 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ currentStaff
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
                           <img
-                            src={p.image || '/src/assets/images/cosmetics_makeup_kit_1792836117515.jpg'}
+                            src={p.image || getProductFallbackImage(p.category)}
                             alt={p.name}
+                            loading="lazy"
+                            decoding="async"
+                            width="40"
+                            height="40"
                             referrerPolicy="no-referrer"
                             className="w-10 h-10 rounded-lg object-cover border border-stone-200 shrink-0"
                           />
@@ -598,6 +604,56 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({ currentStaff
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Local Codebase Image Selector */}
+              <div>
+                <label className="block text-stone-700 font-medium mb-1">
+                  Product Image (Loaded Instantly from Codebase)
+                </label>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-1">
+                  {[
+                    { label: 'Kundan Choker', img: IMAGE_PATHS.products.kundanChoker },
+                    { label: 'Gold Bangles', img: IMAGE_PATHS.products.hyderabadiBangles },
+                    { label: 'Jhumkas', img: IMAGE_PATHS.products.goldJhumkas },
+                    { label: 'Matte Lipstick', img: IMAGE_PATHS.products.matteLipstick },
+                    { label: 'HD Foundation', img: IMAGE_PATHS.products.radiantFoundation },
+                    { label: 'Zari Lace', img: IMAGE_PATHS.products.zariVelvetLace },
+                    { label: 'Gota Lace', img: IMAGE_PATHS.products.gotaCutworkLace },
+                    { label: 'Mirror Lace', img: IMAGE_PATHS.products.mirrorWorkLace },
+                    { label: 'Hair Vine', img: IMAGE_PATHS.products.bridalHairVine },
+                    { label: 'Scrunchies', img: IMAGE_PATHS.products.silkScrunchies },
+                    { label: 'Rose Mist', img: IMAGE_PATHS.products.roseFacialMist },
+                    { label: 'Potli Bag', img: IMAGE_PATHS.products.embroideredPotliBag },
+                  ].map((item) => {
+                    const isSelected = editingProduct.image === item.img;
+                    return (
+                      <button
+                        key={item.label}
+                        type="button"
+                        onClick={() => setEditingProduct({ ...editingProduct, image: item.img })}
+                        className={`flex flex-col items-center p-1.5 rounded-lg border text-center transition-all ${
+                          isSelected
+                            ? 'border-rose-600 bg-rose-50/70 ring-1 ring-rose-500'
+                            : 'border-stone-200 bg-stone-50 hover:bg-stone-100'
+                        }`}
+                      >
+                        <img
+                          src={item.img}
+                          alt={item.label}
+                          loading="lazy"
+                          decoding="async"
+                          width="48"
+                          height="40"
+                          className="w-12 h-10 object-cover rounded-md mb-1 border border-stone-200"
+                        />
+                        <span className="text-[10px] text-stone-700 font-medium truncate w-full">
+                          {item.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Description */}
